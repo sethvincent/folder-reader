@@ -1,6 +1,6 @@
 {
   "name": "folder-reader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "recursively stream a directory of files",
   "main": "index.js",
   "scripts": {
