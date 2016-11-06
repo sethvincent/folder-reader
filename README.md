@@ -31,7 +31,8 @@ Example item in the stream:
   root: '/Users/sdv/workspace/sethvincent/folder-reader',
   filepath: '/Users/sdv/workspace/sethvincent/folder-reader/tests/index.js',
   stat: [fs.Stat Object],
-  type: 'file' // or 'directory'
+  type: 'file' // or 'directory',
+  file: '' // the contents of the file
 }
 ```
 

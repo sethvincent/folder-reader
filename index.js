@@ -4,6 +4,7 @@ var walker = require('folder-walker')
 var micromatch = require('micromatch')
 var through = require('through2')
 var isarray = require('isarray')
+var pump = require('pump')
 
 /**
 * Create a stream that outputs the contents of a set of directories recursively
@@ -29,7 +30,7 @@ module.exports = function folderReader (dirs, options) {
   var filter = options.filter || '**/*'
   var map = options.map || function (data, cb) { return cb(data) }
 
-  return walker(dirs).pipe(through.obj(each))
+  return pump(walker(dirs), through.obj(each))
 
   function each (data, enc, next) {
     var self = this
