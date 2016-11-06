@@ -1,0 +1,45 @@
+{
+  "name": "folder-reader",
+  "version": "0.0.0",
+  "description": "recursively stream a directory of files",
+  "main": "index.js",
+  "scripts": {
+    "deps": "dependency-check . && dependency-check . --unused --no-dev && ncu",
+    "docs:api": "documentation build index.js -f md -o docs/API.md",
+    "docs:build": "npm run docs:api",
+    "lint": "standard",
+    "test:no-lint": "node tests/*.js | tap-spec",
+    "test": "npm run lint && npm run test:no-lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sethvincent/folder-reader.git"
+  },
+  "keywords": [
+    "stream",
+    "walk",
+    "dir",
+    "folder",
+    "directory",
+    "fs"
+  ],
+  "author": "sethvincent",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sethvincent/folder-reader/issues"
+  },
+  "homepage": "https://github.com/sethvincent/folder-reader#readme",
+  "dependencies": {
+    "folder-walker": "^3.0.0",
+    "isarray": "^2.0.1",
+    "micromatch": "^2.3.11",
+    "through2": "^2.0.1"
+  },
+  "devDependencies": {
+    "documentation": "^4.0.0-beta12",
+    "obj-keypath": "^1.0.0",
+    "standard": "^8.5.0",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.6.2"
+  }
+}
