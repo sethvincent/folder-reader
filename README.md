@@ -54,14 +54,32 @@ var dir = path.join(__dirname, 'docs')
 reader(dir).on('data', console.log)
 ```
 
+### Using alternate fs implementations
+
+You can use this module with alternate fs implementations like [hyperdrive](https://npmjs.com/hyperdrive) by passing the alternate `fs` as an option:
+
+```
+var reader = require('folder-reader')
+var hyperdrive = require('hyperdrive')
+
+var drive = hyperdrive('./drive')
+
+reader('/some/dir', { fs: drive })
+```
+
+[See a more detailed example of using this module with hyperdrive.](examples/hyperdrive.js)
+
 ## Documentation
 - [Getting started](docs/getting-started.md)
-- [Related modules](docs/related-modules.md)
 - [API](docs/api.md)
 - [Tests](tests/)
 
 ### Examples
-- [Basic example](examples/basic.js)
+- [basic usage](examples/basic-usage.js)
+- [stream data event](examples/data-event.js)
+- [using with through2](examples/through.js)
+- [using with hyperdrive](examples/hyperdrive.js)
+
 
 ## Contributing
 

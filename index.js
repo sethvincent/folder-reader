@@ -11,6 +11,7 @@ var pump = require('pump')
 * @name folderReader
 * @param {Array} dirs – The directories to read. Optionally can pass string path of one directory.
 * @param {Object} options
+* @param {Object} options.fs – alternate fs implementation, optional
 * @param {String} options.encoding – encoding of files, default: utf8
 * @param {String} options.filter – glob pattern for filtering files, examples: `*.md`, `*.css`
 * @param {String} options.filter – array of glob patterns for filtering files, examples: `*.md`, `*.css`
@@ -26,11 +27,12 @@ var pump = require('pump')
 module.exports = function folderReader (dirs, options) {
   if (!isarray(dirs)) dirs = [dirs]
   options = options || {}
+  var xfs = options.fs || fs
   var encoding = options.encoding || 'utf8'
   var filter = options.filter || '**/*'
   var map = options.map || function (data, cb) { return cb(data) }
 
-  return pump(walker(dirs), through.obj(each))
+  return pump(walker(dirs, { fs: xfs }), through.obj(each))
 
   function each (data, enc, next) {
     var self = this
@@ -39,7 +41,7 @@ module.exports = function folderReader (dirs, options) {
       next()
     } else if (data.type === 'file') {
       if (micromatch(data.relname, filter).length) {
-        fs.readFile(data.filepath, encoding, function (err, file) {
+        xfs.readFile(data.filepath, encoding, function (err, file) {
           if (err) return next(err)
           data.file = file
 
