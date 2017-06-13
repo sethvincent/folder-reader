@@ -58,7 +58,7 @@ reader(dir).on('data', console.log)
 
 You can use this module with alternate fs implementations like [hyperdrive](https://npmjs.com/hyperdrive) by passing the alternate `fs` as an option:
 
-```
+```js
 var reader = require('folder-reader')
 var hyperdrive = require('hyperdrive')
 
