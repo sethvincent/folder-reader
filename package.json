@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "deps": "dependency-check . && dependency-check . --unused --no-dev && ncu",
-    "docs:api": "documentation build index.js -f md -o docs/API.md",
+    "docs:api": "documentation build index.js -f md -o docs/API.md --markdown-toc=false",
     "docs:build": "npm run docs:api",
     "lint": "standard",
     "test:no-lint": "node tests/*.js | tap-spec",
@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "documentation": "^4.0.0-rc.1",
-    "hyperdrive": "^9.4.0",
+    "hyperdrive": "^9.4.6",
     "mirror-folder": "^2.1.1",
     "obj-keypath": "^1.1.0",
     "standard": "^10.0.2",
