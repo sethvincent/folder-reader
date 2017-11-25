@@ -1,5 +1,6 @@
 var path = require('path')
 var test = require('tape')
+var match = require('anymatch')
 var reader = require('../index')
 
 var dir = path.join(__dirname, 'fixtures')
@@ -40,12 +41,19 @@ test('multiple directories', function (t) {
   })
 })
 
-test('filter results', function (t) {
-  var stream = reader(dir, { filter: '**/*.js' })
+test('ignore files', function (t) {
+  function ignore (file, data) {
+    // ignore everything except js files
+    return !(match(['**/*.js'], file))
+  }
+
+  var stream = reader(dir, { ignore: ignore })
   var contents = {}
 
   stream.on('data', function (data) {
-    if (data.type === 'file') contents[data.relname] = data.file
+    if (data.type === 'file') {
+      contents[data.relname] = data.file
+    }
   })
 
   stream.on('end', function () {
@@ -55,31 +63,19 @@ test('filter results', function (t) {
   })
 })
 
-test('negation filter', function (t) {
-  var stream = reader(dir, { filter: ['**/*', '!**/*.md'] })
-  var contents = {}
-
-  stream.on('data', function (data) {
-    if (data.type === 'file') contents[data.relname] = data.file
-  })
-
-  stream.on('end', function () {
-    var keys = Object.keys(contents)
-    t.equal(keys.length, 2)
-    t.end()
-  })
-})
-
 test('map results', function (t) {
-  var stream = reader(dir, { map: function (data, cb) {
+  function map (data, cb) {
     data.file = 'hi'
-    cb(data)
-  }})
+    return data
+  }
 
+  var stream = reader(dir, { map: map })
   var contents = {}
 
   stream.on('data', function (data) {
-    if (data.type === 'file') contents[data.relname] = data.file
+    if (data.type === 'file') {
+      contents[data.relname] = data.file
+    }
   })
 
   stream.on('end', function () {

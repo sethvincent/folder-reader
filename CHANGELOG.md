@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 * ???
 
+## v2.0.0
+
+### Changed
+
+* `options.map` now must return the data object instead of passing it to a callback
+
+### Removed
+
+* Removed glob matching with `options.filter`. `options.ignore` function can be used instead
+
+### Added
+
+* `options.ignore` function for ignoring files/folders
+
 ## v1.1.0
 
 ### Added

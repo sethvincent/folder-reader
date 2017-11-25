@@ -1,7 +1,6 @@
 var fs = require('fs')
 
 var walker = require('folder-walker')
-var micromatch = require('micromatch')
 var through = require('through2')
 var isarray = require('isarray')
 var pump = require('pump')
@@ -13,9 +12,8 @@ var pump = require('pump')
 * @param {Object} options
 * @param {Object} options.fs – alternate fs implementation, optional
 * @param {String} options.encoding – encoding of files, default: utf8
-* @param {String} options.filter – glob pattern for filtering files, examples: `*.md`, `*.css`
-* @param {String} options.filter – array of glob patterns for filtering files, examples: `*.md`, `*.css`
-* @param {Function} options.map – A function you can use to map the contents of files after they are read
+* @param {String} options.ignore – ignore function for choosing to ignore files and folders, optional
+* @param {Function} options.map – A function you can use to map the contents of files after they are read, optional
 * @example
 * var path = require('path')
 * var reader = require('folder-reader')
@@ -25,34 +23,44 @@ var pump = require('pump')
 **/
 
 module.exports = function folderReader (dirs, options) {
-  if (!isarray(dirs)) dirs = [dirs]
+  if (!isarray(dirs)) {
+    dirs = [dirs]
+  }
+
   options = options || {}
   var xfs = options.fs || fs
   var encoding = options.encoding || 'utf8'
-  var filter = options.filter || '**/*'
-  var map = options.map || function (data, cb) { return cb(data) }
+  var ignore = options.ignore
+  var map = options.map
 
   return pump(walker(dirs, { fs: xfs }), through.obj(each))
 
   function each (data, enc, next) {
     var self = this
+
+    // if ignored, keep moving through the stream
+    if (ignore && ignore(data.filepath, data)) {
+      return next()
+    }
+
+    // push directories through the stream unchanged
     if (data.type === 'directory') {
       this.push(data)
-      next()
-    } else if (data.type === 'file') {
-      if (micromatch(data.relname, filter).length) {
-        xfs.readFile(data.filepath, encoding, function (err, file) {
-          if (err) return next(err)
-          data.file = file
-
-          map(data, function (updated) {
-            if (updated) self.push(updated)
-            next()
-          })
-        })
-      } else {
-        next()
-      }
+      return next()
     }
+
+    // assume a file if not a directory
+    xfs.readFile(data.filepath, encoding, function (err, file) {
+      if (err) return next(err)
+
+      data.file = file
+
+      if (map) {
+        data = map(data)
+      }
+
+      self.push(data)
+      next()
+    })
   }
 }
