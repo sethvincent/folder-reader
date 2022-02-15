@@ -14,6 +14,7 @@ var pump = require('pump')
 * @param {String} options.encoding – encoding of files, default: utf8
 * @param {String} options.ignore – ignore function for choosing to ignore files and folders, optional
 * @param {Function} options.map – A function you can use to map the contents of files after they are read, optional
+* @param {Boolean} options.readFileContent – A boolean indicating whether to read the file content, default: true
 * @example
 * var path = require('path')
 * var reader = require('folder-reader')
@@ -32,6 +33,7 @@ module.exports = function folderReader (dirs, options) {
   var encoding = options.encoding || 'utf8'
   var ignore = options.ignore
   var map = options.map
+  var readFileContent = options.readFileContent !== false
 
   return pump(walker(dirs, { fs: xfs }), through.obj(each))
 
@@ -45,6 +47,11 @@ module.exports = function folderReader (dirs, options) {
 
     // push directories through the stream unchanged
     if (data.type === 'directory') {
+      this.push(data)
+      return next()
+    }
+
+    if (!readFileContent) {
       this.push(data)
       return next()
     }

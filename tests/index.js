@@ -115,3 +115,23 @@ test('alternate fs implementation', function (t) {
     })
   })
 })
+
+test('skip reading files', function (t) {
+  const stream = reader(dir, { readFileContent: false })
+  const contents = {}
+
+  stream.on('data', function (data) {
+    if (data.type === 'file') {
+      contents[data.relname] = data
+    }
+  })
+
+  stream.on('end', function () {
+    Object.keys(contents).forEach(function (key) {
+      const data = contents[key]
+      t.equal(data.file, undefined)
+    })
+
+    t.end()
+  })
+})
